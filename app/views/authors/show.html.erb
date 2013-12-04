@@ -1,0 +1,23 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Fullname:</strong>
+  <%= @author.fullname %>
+</p>
+
+<% if @author.books.any? %>
+  <hr>
+
+  <h3>Books</h3>
+
+  <ul>
+    <% for book in @author.books %>
+      <li>
+        <%= link_to book.title, book %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
+<%= link_to 'Edit', edit_author_path(@author) %> |
+<%= link_to 'Back', authors_path %>

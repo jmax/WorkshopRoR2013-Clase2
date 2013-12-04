@@ -1,0 +1,18 @@
+<hr>
+
+<h3>Categories</h3>
+
+<%= hidden_field_tag "book[category_ids][]", nil %>
+
+<ul class="categories-checkboxes">
+  <% Category.all.each do |category| %>
+    <li>
+      <label>
+        <%= check_box_tag "book[category_ids][]",
+          category.id, @book.category_ids.include?(category.id),
+          id: dom_id(category) %>
+        <%= category.name %>
+      </label>
+    </li>
+  <% end %>
+</ul>

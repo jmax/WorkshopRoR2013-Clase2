@@ -1,0 +1,8 @@
+<tr>
+  <td><%= book.id %></td>
+  <td><%= link_to book.author.fullname, book.author %></td>
+  <td><%= link_to book.title, book %></td>
+  <td><%= book.categories.map(&:name).join(", ") %></td>
+  <td><%= link_to 'Edit', [:edit, book] %></td>
+  <td><%= link_to 'Destroy', book, method: :delete, data: { confirm: 'Are you sure?' } %></td>
+</tr>

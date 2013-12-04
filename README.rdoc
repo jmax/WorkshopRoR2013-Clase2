@@ -1,0 +1,125 @@
+Clase #2
+
+1) Agregar la columna author_id de tipo integer
+
+rails g migration AddAuthorIdToBooks author_id:integer
+
+2) No olvidar a agregar un índice para la clave foránea que se agregó
+
+add_index :books, :author_id
+
+3) Importante: revisar que la columna nueva figure en el whitelist de atributos, dentro del controlador
+
+def book_params
+  params.require(:book).permit(:title, :summary, :author_id)
+end
+
+4) En el form de Book, agregamos un select para asignar el author
+
+<div class="field">
+  <%= f.label :author_id, "Author" %><br>
+  <%= f.select :author_id, Author.all.map{|a| [a.fullname, a.id] }, { include_blank: true } %>
+</div>
+
+5) En el show de Author, agregamos un listado de libros de ese author.
+
+<% if @author.books.any? %>
+  <hr>
+
+  <h3>Books</h3>
+
+  <ul>
+    <% for book in @author.books %>
+      <li>
+        <%= link_to book.title, book %>
+      </li>
+    <% end %>
+  </ul>
+<% end %>
+
+* solo muestra el listado de libros si el autor tiene libros creados.
+
+6) Validamos que el author sea obligatorio
+
+validates :author, presence: true
+
+7) Crear una tabla para relacionar book con category
+
+rails g migration create_books_categories
+
+8) Adaptar la migración
+
+class CreateTableBooksCategories < ActiveRecord::Migration
+  def change
+    create_table :books_categories, id: false do |t|
+      t.belongs_to :book
+      t.belongs_to :category
+    end
+
+    add_index :books_categories, [:book_id, :category_id], unique: true
+  end
+end
+
+9) Desde la consola, agregamos categorias a los libros
+
+> b = Book.first
+> c = Category.first
+> b.categories << c
+
+10) Presentamos las categorias en el listado de books
+
+<td><%= book.categories.map(&:name).join(", ") %></td>
+
+11) Hacemos que cuando se borre un Author, se borren también sus Books
+
+has_many :books, dependent: :destroy
+
+12) Agregamos la posibilidad de seleccionar categorias para un book.
+
+12.1) En el modelo Book:
+
+accepts_nested_attributes_for :categories
+
+12.2) Agrego el atributo virtual al whitelist de books
+
+manufacturer_category_ids: []
+
+12.3) Agrego la brujería para tener los checkboxes en el form de book
+
+  <hr>
+
+  <h3>Categories</h3>
+
+  <%= hidden_field_tag "book[category_ids][]", nil %>
+
+  <ul class="categories-checkboxes">
+    <% Category.all.each do |category| %>
+      <li>
+        <label>
+          <%= check_box_tag "book[category_ids][]",
+            category.id, @book.category_ids.include?(category.id),
+            id: dom_id(category) %>
+          <%= category.name %>
+        </label>
+      </li>
+    <% end %>
+  </ul>
+
+12.4) Limpiamos el form, sacando los checkboxes a un partial
+
+<%= render "category_checkboxes" %>
+
+13) Me olvide que en el index de books también podía ir:
+
+<%= render @books %>
+
+14) Validamos que un book tenga por lo menos una categoria asociada. En Book se agrega:
+
+  validate :at_least_one_category_is_present
+
+protected
+  def at_least_one_category_is_present
+    if categories.empty?
+      errors.add(:base, "You must select at least one category")
+    end
+  end

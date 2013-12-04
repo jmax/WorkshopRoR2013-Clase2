@@ -1,0 +1,28 @@
+<h2>Listing books</h2>
+
+<br>
+
+<%= link_to 'New Book', new_book_path %>
+
+<hr>
+
+<table>
+  <thead>
+    <tr>
+      <th>ID</th>
+      <th>Author</th>
+      <th>Title</th>
+      <th>Categories</th>
+      <th></th>
+      <th></th>
+    </tr>
+  </thead>
+
+  <tbody>
+    <%= render @books %>
+  </tbody>
+</table>
+
+<br>
+
+<%= link_to 'New Book', new_book_path %>
