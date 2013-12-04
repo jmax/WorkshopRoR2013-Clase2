@@ -123,3 +123,33 @@ protected
       errors.add(:base, "You must select at least one category")
     end
   end
+
+
+
+================
+
+REST y Rails
+
+El protocolo HTTP mapea directamente un CRUD (ABM)
+
+Con sus metodos GET, POST, PUT/PATCH, DELETE
+
+
+Cuando uso -> resources :books
+
+Acciones de "Colección"
+  GET    /books          -> index   -> books_path
+  POST   /books          -> create  -> books_path
+  GET    /books/new      -> new     -> new_book_path
+
+Acciones de "Miembro"
+  GET    /books/:id      -> show     -> book_path(book)
+    -> link_to "...", book_path(book)
+    -> link_to "...", book
+  PUT    /books/:id      -> update   -> book_path(book)
+  DELETE /books/:id      -> destroy  -> book_path(book)
+    -> link_to "...", book_path(book), method: :delete
+    -> link_to "...", book, method: :delete
+  GET    /books/:id/edit -> edit     -> edit_book_path(book)
+    -> link_to "...", edit_book_path(book)
+    -> link_to "...", [:edit, book]
